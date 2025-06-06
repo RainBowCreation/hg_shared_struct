@@ -10,7 +10,6 @@ use spacetimedb::{
     ReducerContext,
 };
 
-
 // st_uuid implementation
 #[derive(Debug, Serialize, SerdeDeserialize, Type)]
 pub struct StUuid(pub Uuid);
