@@ -1,5 +1,5 @@
 [package]
-name = "hg_shared"
+name = "hg_shared_struct"
 version = "0.1.0"
 edition = "2021"
 

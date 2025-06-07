@@ -236,5 +236,5 @@ pub fn convert() {
         .flat_map(|s| s.lines())
         .collect();
 
-    std::fs::write("lib.ts", lines_to_write.join("\n")).unwrap();
+    std::fs::write("hg_shared_struct.ts", lines_to_write.join("\n")).unwrap();
 }
