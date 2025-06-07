@@ -1,55 +1,17 @@
-use specta::{Type, ts};
-use sha3::{Sha3_256, Digest};
-use serde::{Serialize, Deserialize as SerdeDeserialize};
+#![allow(
+dead_code,
+unused_imports,
+special_module_name
+)]
+use specta::{Type, ts, specta};
 use time::Time;
-
 use uuid::Uuid;
-use std::{fmt::Display, ops::Deref};
-use spacetimedb::{
-    sats::{impl_deserialize, impl_serialize, impl_st},
-    ReducerContext,
-};
-
-// st_uuid implementation
-#[derive(Debug, Serialize, SerdeDeserialize, Type)]
-pub struct StUuid(pub Uuid);
-
-// spacetimedb impls
-impl_st!([] StUuid, spacetimedb::sats::AlgebraicType::String);
-impl_serialize!([] StUuid, (self, ser) => {
-    ser.serialize_str(self.hyphenated().encode_upper(&mut Uuid::encode_buffer()))
-});
-impl_deserialize!([] StUuid, de => {
-    let s = <std::string::String as spacetimedb::Deserialize>::deserialize(de).map(|s| s.into_boxed_str())?;
-    Ok(Uuid::parse_str(&s).map(|u| u.into()).expect("Failed to Deserialize to UUID"))
-});
-
-impl StUuid {
-    pub fn new(ctx: &ReducerContext) -> Self {
-        StUuid(Uuid::from_bytes(ctx.random()))
-    }
-}
-
-impl Display for StUuid {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(&self.0.to_string())
-    }
-}
-
-impl Deref for StUuid {
-    type Target = Uuid;
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-
-impl From<Uuid> for StUuid {
-    fn from(val: Uuid) -> Self {
-        Self(val)
-    }
-}
+use serde::{Serialize, Deserialize as SerdeDeserialize};
 
 // Seed and related types
+//#[derive(Type)]
+#[derive(Debug, Serialize, SerdeDeserialize, Type)]
+pub struct StUuid(pub Uuid);
 
 #[derive(Type)]
 pub struct Seed {
@@ -218,13 +180,6 @@ pub struct Metadata {
     pub physical: Physical,
     pub relationship: Relationship,
     pub money: u32,
-}
-
-pub fn hash_sha256(input: &str) -> String {
-    let mut hasher = Sha3_256::new();
-    hasher.update(input);
-    let result = hasher.finalize();
-    return result.iter().map(|b| format!("{:02x}", b)).collect();
 }
 
 pub fn convert() {
